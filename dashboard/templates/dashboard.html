@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>C2Mirage Sentinel SOC Dashboard</title>
+
+<meta http-equiv="refresh" content="5">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+
+body{
+background:#0b132b;
+color:white;
+font-family:Arial;
+padding:40px;
+}
+
+.cards{
+display:flex;
+gap:20px;
+margin-bottom:30px;
+}
+
+.card{
+background:#1c2541;
+padding:20px;
+border-radius:10px;
+width:200px;
+text-align:center;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:30px;
+}
+
+th{
+background:#1c2541;
+padding:10px;
+text-align:left;
+}
+
+td{
+padding:10px;
+border-bottom:1px solid #333;
+}
+
+.high{
+color:red;
+font-weight:bold;
+}
+
+.medium{
+color:orange;
+font-weight:bold;
+}
+
+.low{
+color:lightgreen;
+font-weight:bold;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>C2Mirage Sentinel SOC Dashboard</h1>
+
+<div class="cards">
+
+<div class="card">
+<h3>Total Alerts</h3>
+<h2>{{ total }}</h2>
+</div>
+
+<div class="card">
+<h3>High Severity</h3>
+<h2 style="color:red">{{ high }}</h2>
+</div>
+
+<div class="card">
+<h3>Medium Severity</h3>
+<h2 style="color:orange">{{ medium }}</h2>
+</div>
+
+<div class="card">
+<h3>Low Severity</h3>
+<h2 style="color:lightgreen">{{ low }}</h2>
+</div>
+
+</div>
+
+
+<h2>Alert Monitoring</h2>
+
+<table>
+
+<tr>
+<th>Time</th>
+<th>Source IP</th>
+<th>Rule</th>
+<th>Severity</th>
+</tr>
+
+{% for alert in alerts %}
+
+<tr>
+
+<td>{{ alert.time }}</td>
+
+<td>{{ alert.ip }}</td>
+
+<td>{{ alert.rule }}</td>
+
+<td>
+
+{% if alert.severity == "High" %}
+<span class="high">High</span>
+
+{% elif alert.severity == "Medium" %}
+<span class="medium">Medium</span>
+
+{% else %}
+<span class="low">Low</span>
+{% endif %}
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+
+<h2>Alert Statistics</h2>
+
+<canvas id="chart" width="400" height="150"></canvas>
+
+
+<script>
+
+const ctx = document.getElementById('chart');
+
+new Chart(ctx, {
+type:'bar',
+data:{
+labels:['High','Medium','Low'],
+datasets:[{
+label:'Alerts',
+data:[{{ high }},{{ medium }},{{ low }}]
+}]
+}
+});
+
+</script>
+
+
+</body>
+</html>
